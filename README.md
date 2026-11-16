@@ -61,13 +61,13 @@ every run, with one line in your terminal:
 { "hooks": { "Stop": [{ "hooks": [{ "type": "command", "command": "npx -y github:mrprosdocimi-YES/agent-receipt --hook" }] }] } }
 ```
 
-### With Rocket Fuel
+### Where the idea comes from
 
 [Rocket Fuel](https://github.com/NulightJens/rocket-fuel-skill) by Jens Heitmann pairs a
-planning-and-review agent with Codex as the builder. Its review step already refuses to
-trust "the intern's demo". Run `receipt --codex` on the Integrator's run before the
-Level 10 review, and the reviewer starts from the claims that lack proof instead of
-re-reading everything.
+planning agent with Codex as the builder, and its review rule is the same principle:
+the builder's report "is a claim, not evidence". It pays for that with a second model that
+re-reads every diff and re-runs every proof. `agent-receipt` is the lightweight version for
+a person reviewing alone: it doesn't redo the work, it tells you which sentences to check.
 
 ## What it does not do
 
