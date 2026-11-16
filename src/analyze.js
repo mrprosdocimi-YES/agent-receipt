@@ -27,7 +27,7 @@ const CLAIMS = [
 ]
 
 // "Not committed", "didn't run the tests", "haven't deployed": an honest gap, not a claim.
-const NEGATED = /\b(not|n't|never|no|without|haven't|hasn't|didn't|wasn't|isn't|skipped|untested|unverified)\b[^.]{0,40}\b(commit|push|deploy|test|run|appl|verif|build|check|live)/i
+const NEGATED = /\b(not|n't|never|without|haven't|hasn't|didn't|wasn't|isn't|skipped|untested|unverified)\b[^.]{0,40}\b(commit|push|deploy|test|run|appl|verif|build|check|live|repeat|re-?ran|rerun)/i
 
 // Files a person should look at whatever the logs say.
 const RISKY = [
@@ -97,10 +97,21 @@ export function analyze(events, opts = {}) {
   const claims = []
   const disclosed = [] // gaps the agent admitted to itself, e.g. "not committed"
   for (const sentence of sentences(summary)) {
+    if (NEGATED.test(sentence)) { disclosed.push(sentence); continue }
     const match = CLAIMS.find((c) => c.re.test(sentence))
     if (!match) continue
-    if (NEGATED.test(sentence)) { disclosed.push(sentence); continue }
     claims.push(judge(sentence, match.kind, evidence, commands, lastEdit))
+  }
+
+  // Test output pasted into the summary as proof: which run did it come from?
+  for (const block of summary.match(/```[\s\S]*?```/g) || []) {
+    const shown = readTestOutput(block)
+    if (shown.passed == null) continue
+    const source = [...evidence].reverse().find((e) => e.kind === 'test' && e.tests && e.tests.passed === shown.passed)
+    const text = `Pasted proof: ${shown.passed} tests passed`
+    if (!source) claims.push({ text, kind: 'test', state: 'asserted', evidence: null, why: 'no run in the log printed this result' })
+    else if (source.stale) claims.push({ text, kind: 'test', state: 'stale', evidence: source, why: staleWhy(source) })
+    else claims.push({ text, kind: 'test', state: 'observed', evidence: source, why: `matches ${source.cmd}` })
   }
 
   // Failures the agent moved on from without ever getting a pass.
@@ -133,6 +144,11 @@ export function analyze(events, opts = {}) {
   if (codeChanged && !evidence.some((e) => e.kind === 'test')) {
     forYou.push({ what: 'No tests ran in this run', why: `${changed.length} file${changed.length === 1 ? '' : 's'} changed` })
   }
+
+  const seen = new Set()
+  const uniqueForYou = forYou.filter((f) => !seen.has(f.what) && seen.add(f.what))
+  forYou.length = 0
+  forYou.push(...uniqueForYou)
 
   const counts = { observed: 0, stale: 0, contradicted: 0, asserted: 0 }
   for (const c of claims) counts[c.state]++

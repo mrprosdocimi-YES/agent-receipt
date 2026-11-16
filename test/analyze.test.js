@@ -94,3 +94,12 @@ test('parses a Codex rollout', () => {
   const r = analyze(parseCodex(lines).map((e, i) => ({ ...e, i })))
   assert.deepEqual(state(r), ['observed', 'observed'])
 })
+
+test('test output pasted into the summary is traced to the run it came from', () => {
+  const r = analyze(run(user(), edit('a.ts'), cmd('npx vitest run', true, 'Tests  29 passed (29)'), edit('b.mjs'),
+    done('Implemented it.\n\nProof:\n```\nTests  29 passed (29)\n```\nThe full proof command was not repeated.')))
+  const pasted = r.claims.find((c) => c.text.startsWith('Pasted proof'))
+  assert.equal(pasted.state, 'stale')
+  assert.equal(r.disclosed.length, 1)
+  assert.equal(new Set(r.forYou.map((f) => f.what)).size, r.forYou.length)
+})
