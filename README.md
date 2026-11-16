@@ -43,8 +43,8 @@ admitted it skipped ("not committed"), and files a person should look at regardl
 ## Use
 
 ```bash
-npx github:andrewprosdocimi/agent-receipt            # latest Claude Code session in this folder
-npx github:andrewprosdocimi/agent-receipt --codex    # latest Codex session
+npx github:mrprosdocimi-YES/agent-receipt            # latest Claude Code session in this folder
+npx github:mrprosdocimi-YES/agent-receipt --codex    # latest Codex session
 receipt path/to/session.jsonl --md                   # Markdown for a pull request
 receipt --html receipt.html                          # a shareable page
 ```
@@ -58,7 +58,7 @@ Add a Stop hook to `.claude/settings.json` and a receipt is written to `.receipt
 every run, with one line in your terminal:
 
 ```json
-{ "hooks": { "Stop": [{ "hooks": [{ "type": "command", "command": "npx -y github:andrewprosdocimi/agent-receipt --hook" }] }] } }
+{ "hooks": { "Stop": [{ "hooks": [{ "type": "command", "command": "npx -y github:mrprosdocimi-YES/agent-receipt --hook" }] }] } }
 ```
 
 ### With Rocket Fuel
