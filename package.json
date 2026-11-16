@@ -3,8 +3,22 @@
   "version": "0.1.0",
   "description": "What your coding agent claimed, against what its own log shows.",
   "type": "module",
-  "bin": { "receipt": "bin/receipt.js" },
-  "scripts": { "test": "node --test" },
-  "engines": { "node": ">=20" },
-  "license": "MIT"
+  "bin": {
+    "receipt": "bin/receipt.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "files": [
+    "bin",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrprosdocimi-YES/agent-receipt"
+  }
 }
