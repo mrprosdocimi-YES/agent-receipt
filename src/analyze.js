@@ -27,7 +27,10 @@ const CLAIMS = [
 ]
 
 // "Not committed", "didn't run the tests", "haven't deployed": an honest gap, not a claim.
-const NEGATED = /\b(not|n't|never|without|haven't|hasn't|didn't|wasn't|isn't|skipped|untested|unverified)\b[^.]{0,40}\b(commit|push|deploy|test|run|appl|verif|build|check|live|repeat|re-?ran|rerun)/i
+const NEGATED = /\b(not|n't|never|without|haven't|hasn't|didn't|wasn't|isn't|aren't|weren't|can't|couldn't|blocked|skipped|untested|unverified)\b[^.]{0,40}\b(commit|push|deploy|test|run|appl|verif|build|check|live|repeat|re-?ran|rerun)/i
+
+// Sentences that tell the reader what to do are not claims about what was done.
+const INSTRUCTION = /^(try|open|run|go|check|tap|click|visit|install|add|use|see|read)\b/i
 
 // Files a person should look at whatever the logs say.
 const RISKY = [
@@ -98,8 +101,10 @@ export function analyze(events, opts = {}) {
   const disclosed = [] // gaps the agent admitted to itself, e.g. "not committed"
   for (const sentence of sentences(summary)) {
     if (NEGATED.test(sentence)) { disclosed.push(sentence); continue }
+    if (INSTRUCTION.test(sentence) || /^!?\[/.test(sentence)) continue // advice to the reader, or a link
     const match = CLAIMS.find((c) => c.re.test(sentence))
     if (!match) continue
+    if (match.kind === 'verify' && !edits.length) continue // nothing changed, so nothing to vouch for
     claims.push(judge(sentence, match.kind, evidence, commands, lastEdit))
   }
 
