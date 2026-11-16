@@ -78,10 +78,18 @@ re-reading everything.
 
 ## Why this exists
 
-I built a gifting product, Cassioni, by directing coding agents: 874 commits, 2,393 tests.
-Three times a "done" cost me real time: a print script that said "printed ✓" over an empty
-tray, artwork "uploaded" to an empty bucket, and a test that passed because it asserted the
-wrong answer. Each time the failure looked like success because nothing complained.
-This is the check I wanted at the end of every run.
+I built a gifting product, Cassioni, by directing coding agents. Most of the time their
+"done" was true. The times it wasn't all looked the same: the agent reported what it saw,
+and what it saw was someone else's self-report.
+
+- A run of camera fixes, each finished and tested, trusted what the camera *said* it was
+  sending. A real recording still came out cropped. The next fix started by measuring.
+- A test passed because it asserted the wrong answer. Only a reviewer who re-ran
+  everything caught it.
+- Codex ran the tests, edited again, and pasted the earlier results under "Proof".
+  This tool caught that one, months later, from the log alone.
+
+A report is not evidence, and no error is not success. This is the check I wanted at the
+end of every run.
 
 MIT · Andrew Prosdocimi
